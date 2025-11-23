@@ -36,7 +36,7 @@ Yii::$app->mailer->compose()
         ->setTo('test@test.com')
         ->setSubject('test')
         ->setHtmlBody('<p>test pengiriman email via graph api</p>')
-	//->setCc('cc@test.com')
+		//->setCc('cc@test.com')
         //->setReplyTo('replyTo@test.com')
         //->attach(Yii::getAlias('@webroot/uploads/file.pdf'))
         ->send();
@@ -48,7 +48,7 @@ atau compose dari file html
 Yii::$app->mailer->compose('file-html', ['model'=>$model])
         ->setTo('test@test.com')
         ->setSubject('test')
-	//->setCc('cc@test.com')
+		//->setCc('cc@test.com')
         //->setReplyTo('replyTo@test.com')
         //->attach(Yii::getAlias('@webroot/uploads/file.pdf'))
         ->send();
