@@ -185,50 +185,54 @@ class ApiMailerMessage extends BaseObject
      */
     public function send()
     {
-        $multipartData = [
-            ['name' => 'to', 'value' => json_encode($this->to)],
-            ['name' => 'subject', 'value' => $this->subject],
-            ['name' => 'body', 'value' => $this->htmlBody ?? $this->textBody],
+        $requestData = [
+            'to' => json_encode($this->to),
+            'subject' => $this->subject,
+            'body' => $this->htmlBody ?? $this->textBody,
         ];
 
         if (!empty($this->cc)) {
-            $multipartData[] = ['name' => 'cc', 'value' => json_encode($this->cc)];
+            $requestData['cc'] = json_encode($this->cc);
         }
 
         if (!empty($this->bcc)) {
-            $multipartData[] = ['name' => 'bcc', 'value' => json_encode($this->bcc)];
+            $requestData['bcc'] = json_encode($this->bcc);
         }
 
         if (!empty($this->replyTo)) {
-            $multipartData[] = ['name' => 'replyTo', 'value' => json_encode($this->replyTo)];
-        }
-
-        foreach ($this->attachments as $attachment) {
-            $fileContent = '';
-            if (isset($attachment['path'])) {
-                $fileContent = file_get_contents($attachment['path']);
-            } elseif (isset($attachment['content'])) {
-                $fileContent = $attachment['content'];
-            }
-
-            if ($fileContent) {
-                $multipartData[] = [
-                    'name' => 'attachments[]',
-                    'content' => $fileContent,
-                    'fileName' => $attachment['name'],
-                ];
-            }
+            $requestData['replyTo'] = json_encode($this->replyTo);
         }
 
         try {
             $client = new Client();
-            $response = $client->createRequest()
+            
+             $request = $client->createRequest()
                 ->setMethod('POST')
                 ->setUrl($this->_mailer->getApiUrl())
-                ->addHeaders(['Accept' => 'application/json'])
-                ->setData($multipartData)
-                ->setFormat(Client::FORMAT_MULTIPART)
-                ->send();
+                ->addHeaders([
+                    'Content-Type' => 'multipart/form-data',
+                    'Accept' => 'application/json',
+                ])
+                ->setData($requestData);
+
+            foreach ($this->attachments as $attachment) {
+                $fileContent = '';
+                if (isset($attachment['path'])) {
+                    $fileContent = $attachment['path'];
+                } elseif (isset($attachment['content'])) {
+                    $fileContent = $attachment['content'];
+                }
+
+                if ($fileContent) {
+                    $request->addFile(
+                        'attachments[]',
+                        $fileContent,
+                        ['fileName' => $attachment['name'], 'mimeType' => $attachment['type'] ?? 'application/octet-stream'],
+                    );
+                }
+            }
+
+            $response = $request->send();
 
             if ($response->isOk) {
                 return true;
