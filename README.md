@@ -36,8 +36,8 @@ Yii::$app->mailer->compose()
         ->setTo('test@test.com')
         ->setSubject('test')
         ->setHtmlBody('<p>test pengiriman email via graph api</p>')
-	//->setCc('cc@test.com');
-        //->setReplyTo('replyTo@test.com');
-        //->attach(Yii::getAlias('@webroot/uploads/file.pdf'));
+	//->setCc('cc@test.com')
+        //->setReplyTo('replyTo@test.com')
+        //->attach(Yii::getAlias('@webroot/uploads/file.pdf'))
         ->send();
 ```
