@@ -41,3 +41,16 @@ Yii::$app->mailer->compose()
         //->attach(Yii::getAlias('@webroot/uploads/file.pdf'))
         ->send();
 ```
+
+atau compose dari file html
+
+```
+Yii::$app->mailer->compose('file-html', ['model'=>$model])
+        ->setTo('test@test.com')
+        ->setSubject('test')
+	//->setCc('cc@test.com')
+        //->setReplyTo('replyTo@test.com')
+        //->attach(Yii::getAlias('@webroot/uploads/file.pdf'))
+        ->send();
+
+```
