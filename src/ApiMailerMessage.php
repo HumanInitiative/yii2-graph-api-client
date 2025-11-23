@@ -17,7 +17,6 @@ class ApiMailerMessage extends BaseObject
     public $bcc = [];
     public $replyTo = [];
     public $subject;
-    public $textBody;
     public $htmlBody;
     public $attachments = [];
 
@@ -106,18 +105,6 @@ class ApiMailerMessage extends BaseObject
     }
     
     /**
-     * Set the text body of the message
-     *
-     * @param string $text The text body of the message
-     * @return static
-     */
-    public function setTextBody($text)
-    {
-        $this->textBody = $text;
-        return $this;
-    }
-    
-    /**
      * Set the HTML body of the message
      *
      * @param string $html The HTML body of the message
@@ -188,7 +175,7 @@ class ApiMailerMessage extends BaseObject
         $requestData = [
             'to' => json_encode($this->to),
             'subject' => $this->subject,
-            'body' => $this->htmlBody ?? $this->textBody,
+            'body' => $this->htmlBody,
         ];
 
         if (!empty($this->cc)) {

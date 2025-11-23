@@ -11,7 +11,6 @@ class ApiMailer extends Component
     public $apiUrl;
     public $viewPath = '@app/mail';
     public $htmlLayout = 'layouts/html';
-    public $textLayout = 'layouts/text';
 
     /**
      * Initializes the component.
@@ -50,7 +49,7 @@ class ApiMailer extends Component
      *
      * @return ApiMailerMessage The composed message.
      */
-    public function compose($view = null, array $params = [])
+    public function compose($view = null, $params = [])
     {
         $message = new ApiMailerMessage($this);
 
@@ -58,25 +57,23 @@ class ApiMailer extends Component
             $this->renderContent($message, $view, $params);
         }
 
-        Yii::configure($message, $params);
         return $message;
     }
 
-    /**
-     * Renders the content of a view and sets it to the message.
-     *
-     * This function will first render the HTML view of the specified view,
-     * and then render the text view of the specified view. If the
-     * htmlLayout or textLayout properties are set, it will
-     * render the content of the view inside the layout and set
-     * the rendered content to the message.
-     *
-     * @param ApiMailerMessage $message The message to render the content for.
-     * @param string $view The name of the view to render.
-     * @param array $params The parameters to pass to the view.
-     *
-     * @return void
-     */
+/**
+ * Renders the content of a view and sets it to the message.
+ *
+ * This function will render the HTML view of the specified view. If the
+ * htmlLayout properties are set, it will
+ * render the content of the view inside the layout and set
+ * the rendered content to the message.
+ *
+ * @param ApiMailerMessage $message The message to render the content for.
+ * @param string $view The name of the view to render.
+ * @param array $params The parameters to pass to the view.
+ *
+ * @return void
+ */
     protected function renderContent($message, $view, $params = [])
     {
         $params['message'] = $message;
@@ -92,17 +89,6 @@ class ApiMailer extends Component
             }
             $message->setHtmlBody($htmlContent);
         }
-
-        // Render Text Body
-        $textViewFile = $this->findViewFile($view, 'text');
-        if ($textViewFile !== null) {
-            $textContent = $viewComponent->renderFile($textViewFile, $params);
-            if ($this->textLayout) {
-                $layoutFile = Yii::getAlias($this->viewPath) . '/' . $this->textLayout . '.php';
-                $textContent = $viewComponent->renderFile($layoutFile, ['content' => $textContent, 'message' => $message], $this);
-            }
-            $message->setTextBody($textContent);
-        }
     }
 
     /**
@@ -111,7 +97,7 @@ class ApiMailer extends Component
      * If the view file is found, the path to the view file is returned, otherwise null is returned.
      *
      * @param string $view The name of the view to find.
-     * @param string $type The type of the view to find (e.g. 'html' or 'text').
+     * @param string $type The type of the view to find (e.g. 'html').
      *
      * @return string|null The path to the view file, or null if not found.
      */
