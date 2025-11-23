@@ -29,7 +29,7 @@ Lalu tambahkan pada `config/web.php` :
 ],
 ```
 
-### 4. Contoh Penggunaan
+### 3. Contoh Penggunaan
 
 ```
 Yii::$app->mailer->compose()
